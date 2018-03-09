@@ -7,7 +7,6 @@ const { getCurrentPrice, getYesterdayPrice } = require('../models/bitcoin.js');
 const cors = require('cors');
 
 router.get('/prices', (req, res) => {
-  console.log('api request for prices');
   let bitcoin = {};
   getCurrentPrice()
   .then(current => {
