@@ -4,6 +4,7 @@ const router = express.Router();
 const ERROR = 422;
 const SUCCESS = 200;
 const { getCurrentPrice, getYesterdayPrice } = require('../models/bitcoin.js');
+const cors = require('cors');
 
 router.get('/prices', (req, res) => {
   console.log('api request for prices');

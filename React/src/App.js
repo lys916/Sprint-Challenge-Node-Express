@@ -1,70 +1,32 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
 import axios from 'axios';
-const newPost = {
-    title: "Title from react app",
-    contents: "lskjdfsd"
-  }
+
+const comma = (price) => {
+  return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
 
 class App extends Component {
-  state = { posts:[], prices: [] };
+  state = {};
 
-  getPost = () => {
-    axios.get('http://localhost:3030/posts').then((res) => {
-      console.log(res.data.results);
-      this.setState({ posts: res.data.results });
-    });
-  }
-
-  addPost = () => {
-    axios.post('http://localhost:3030/posts', newPost).then((res) => {
-      console.log(res);
-    });
-  }
-
-  getPrices = () => {
+  componentWillMount(){
     axios.get('http://localhost:3030/prices').then((res) => {
-      let prices = Object.keys(res.data).map((key) => {
-        return {name: key, price: res.data[key].USD};
-      });
-      this.setState({prices: prices});
-      });
-  }
-
-  componentDidMount(){
-    this.getPrices();
-    setInterval(() => {
-      this.getPrices();
-    }, 10000);
+      res.data.currentPrice = comma(res.data.currentPrice);
+      res.data.yesterdayPrice = comma(res.data.yesterdayPrice);
+      res.data.priceDifference = comma(res.data.priceDifference);
+      res.data.priceDifference = res.data.priceDifference.substr(0, 1) + '$' + res.data.priceDifference.substr(1);
+      this.setState(res.data);
+    });
   }
 
   render() {
-
     return (
-      <div className="App">
-        <div className="buttons">
-          <button onClick={() => {this.getPost()}}>Get Posts</button>
-          <button onClick={() => {this.addPost()}}>Add Post</button>
-        </div>
-        <div className="posts">
-          {this.state.posts.map((post) => {
-            return (
-              <div className="post">
-                <div>{post.name}</div>
-
-              </div>
-            );
-          })}
-           {this.state.prices.map((price) => {
-              return (
-              <div>
-                <div className="price"></div>
-                <div>{price.name} : {price.price}</div>
-              </div>
-              );
-            })}
-        </div>
+      <div className="App"> 
+        
+        <div className="title">BITCOIN PRICE</div>
+        <div className="price">${this.state.currentPrice}</div>
+        <div className="different">SINCE YESTERDAY</div>
+        <div className="price">{this.state.priceDifference}</div>
       </div>
     );
   }
